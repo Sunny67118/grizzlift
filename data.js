@@ -297,7 +297,7 @@ window.GRIZZLIFT_DATA = {
         {
           id: 'tuck_lsit', name: 'Tuck L-sit hold', target: 'Compression hanche, L-sit', cat: 'lsit',
           pattern: 'compression',
-          icon: 'core', sets: 3, reps: '25 sec', rest: 60,
+          icon: 'core', sets: 3, reps: '25 sec', rest: 60, duration: 25,
           info: {
             action: 'Mains sur parallettes ou bancs, bras tendus, genoux ramenés.',
             focus: 'Pousse le sol, épaules basses, compresse les hanches.',
@@ -397,7 +397,7 @@ window.GRIZZLIFT_DATA = {
         {
           id: 'stir_the_pot', name: 'Stir the pot', target: 'Gainage, Stabilité', cat: 'core',
           pattern: 'anti_extension',
-          icon: 'core', sets: 3, reps: '30 sec', rest: 45,
+          icon: 'core', sets: 3, reps: '30 sec', rest: 45, duration: 30,
           info: {
             action: 'Planche, avant-bras posés sur le swiss ball.',
             focus: 'Dessine de petits cercles avec les avant-bras.',

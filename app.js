@@ -148,7 +148,7 @@
     if (session.mode === 'sets' || session.mode === 'pick') {
       exs.forEach((ex, i) => {
         for (let set = 1; set <= ex.sets; set++) {
-          steps.push({ kind: 'work', ex: i, set });
+          steps.push({ kind: 'work', ex: i, set, timed: ex.duration || null });
           steps.push({ kind: 'rest', ex: i, set, dur: ex.rest });
         }
       });
@@ -602,9 +602,19 @@
     return `<button class="btn btn-ghost" data-action="back">⬅ ${same ? label.same : label.other}</button>`;
   }
 
+  // Ce qui suit l'étape en cours : durée de la récup, station suivante ou fin
+  const fmtDur = (sec) => (sec < 60 ? `${sec} s` : `${Math.floor(sec / 60)} min${sec % 60 ? ' ' + (sec % 60) : ''}`);
+  function afterHint(prefix = 'Ensuite') {
+    const nx = plan.steps[run.step + 1];
+    if (!nx) return `${prefix} : fin de séance 🐻`;
+    if (nx.kind === 'rest') return `${prefix} : ${fmtDur(nx.dur)} de récup`;
+    return `${prefix} : ${esc(plan.exs[nx.ex].name)}`;
+  }
+
   function workSets(st) {
     const ex = plan.exs[st.ex];
     const last = run.step === plan.steps.length - 1;
+    if (st.timed) return timedStation(st, ex, last);
     return `
       <main class="screen work">
         <div class="ex-head"><h1>${esc(ex.name)}</h1><p class="target">${esc(ex.target)}</p></div>
@@ -620,6 +630,7 @@
             <span class="big accent">${esc(ex.reps)}</span>
           </div>
         </div>
+        <p class="next-mini">${afterHint()}</p>
       </main>
       <footer class="actions">
         <button class="btn btn-xl btn-primary" data-action="next">${last ? 'Dernière série ✓' : 'Série terminée'}</button>
@@ -647,6 +658,7 @@
             <span class="big accent">${esc(ex.reps)}</span>
           </div>
         </div>
+        <p class="next-mini">${afterHint()}</p>
       </main>
       <footer class="actions">
         <button class="btn btn-xl btn-primary" data-action="next">${last ? 'Dernière station ✓' : 'Station terminée'}</button>
@@ -657,25 +669,29 @@
       </footer>`}`;
   }
 
-  // Station chronométrée (planche) : on se met en place, on lance, elle s'enchaîne seule à 0
+  // Exo chronométré (planche, L-sit…) : on se met en place, on lance, la suite s'enchaîne seule à 0
   function timedStation(st, ex, last) {
     const started = run.endsAt != null;
     const total = st.timed * 1000;
+    const circuit = plan.session.mode === 'circuit';
+    const where = circuit ? `Station ${st.ex + 1} / ${plan.exs.length}` : `Série ${st.set} / ${ex.sets}`;
+    const done = circuit ? 'Station terminée' : 'Série terminée';
+    const back = circuit ? { same: 'Précédente', other: 'Précédente' } : { same: 'Série précédente', other: 'Exercice précédent' };
     return `
       <main class="screen auto">
         <div class="ex-head">
-          <p class="eyebrow">${started ? 'Tiens bon' : `Station ${st.ex + 1} / ${plan.exs.length}`}</p>
+          <p class="eyebrow">${started ? `Tiens bon · ${where}` : where}</p>
           <h1>${esc(ex.name)}</h1><p class="target">${esc(ex.target)}</p>
         </div>
         ${visual(ex)}
         ${ring(started ? run.endsAt - Date.now() : total, total, 'hold')}
-        <p class="next-mini">${started ? (last ? 'Dernière station' : 'La suite s’enchaîne toute seule à 0') : 'Mets-toi en position, puis lance le chrono'}</p>
+        <p class="next-mini">${started ? afterHint('À 0') : 'Mets-toi en position, puis lance le chrono'}</p>
       </main>
       <footer class="actions">
         ${started
-          ? `<button class="btn btn-xl btn-secondary" data-action="next">${last ? 'Terminer ✓' : 'Station terminée'}</button>`
+          ? `<button class="btn btn-xl btn-secondary" data-action="next">${last ? 'Terminer ✓' : done}</button>`
           : `<button class="btn btn-xl btn-primary" data-action="timer-start">▶ Lancer · ${st.timed} s</button>`}
-        ${backButton({ same: 'Précédente', other: 'Précédente' })}
+        ${backButton(back)}
       </footer>`;
   }
 
@@ -826,7 +842,7 @@
       ${opt('transient', 'Prioritaires', 'La musique baisse brièvement pendant le bip. Plus audible en salle.')}
       <button class="btn btn-secondary" data-action="test-sound">🔊 Tester le son</button>
       <button class="btn btn-xl btn-primary" data-action="close-modal">OK</button>
-      <p class="credits">Photos : free-exercise-db (domaine public) · SkiErg : Kiet Le, CC BY 2.0 · L-sit : BandiSW, CC BY-SA 4.0 (Wikimedia Commons) · Animations : FitnessProgramer.com (usage personnel).</p>`);
+      <p class="credits">Photos : free-exercise-db (domaine public) · SkiErg : Kiet Le, CC BY 2.0 (Wikimedia Commons) · Animations : FitnessProgramer.com (usage personnel).</p>`);
   }
 
   /* ---------- Actions ---------- */
