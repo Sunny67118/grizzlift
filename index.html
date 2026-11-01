@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Grizzlift</title>
+  <meta name="description" content="Guide de séance pas à pas : exercices, séries et chrono de récupération.">
+  <meta name="theme-color" content="#141210">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Grizzlift">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preload" href="fonts/plus-jakarta-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Thème appliqué avant le premier affichage (évite un flash de la mauvaise couleur)
+    try {
+      var t = (JSON.parse(localStorage.getItem('grizzlift.settings.v1')) || {}).appearance || 'auto';
+      if (t === 'auto') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="modal" hidden></div>
+  <label id="haptic" aria-hidden="true"><input type="checkbox" switch tabindex="-1"></label>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

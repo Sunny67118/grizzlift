@@ -1,0 +1,7 @@
+.DS_Store
+
+# Fichiers sources de travail, non utilisés par l'app
+/*.gif
+/Log-app.jpeg
+/programme-bodyfit.html
+/mobilite-gifs/
